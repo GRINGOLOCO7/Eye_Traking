@@ -1,0 +1,6 @@
+File Path Face Image,File Path Left Eye Image,File Path Right Eye Image,x,y
+data/saved_images/face_image_1.png,data/saved_images/left_eye_image_1.png,data/saved_images/right_eye_image_1.png,1664,624
+data/saved_images/face_image_2.png,data/saved_images/left_eye_image_2.png,data/saved_images/right_eye_image_2.png,1559,434
+data/saved_images/face_image_3.png,data/saved_images/left_eye_image_3.png,data/saved_images/right_eye_image_3.png,1163,715
+data/saved_images/face_image_4.png,data/saved_images/left_eye_image_4.png,data/saved_images/right_eye_image_4.png,377,862
+data/saved_images/face_image_5.png,data/saved_images/left_eye_image_5.png,data/saved_images/right_eye_image_5.png,750,611
