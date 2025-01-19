@@ -4,7 +4,7 @@ In this repo we will create a CNN to detect where the user eye are looking in th
 
 ## Collect Data
 
-To collect data I prepared a code (`collect_data.py`).
+To collect data I prepared a code (`data_collection.py`).
 
 1. The code open a window on the screen as big as Desktop screen. Then gives you 10 seconds to prepare.
 
@@ -30,9 +30,9 @@ To collect data I prepared a code (`collect_data.py`).
 
 #### Data Processing
 
-1. clean data: sometimes the eyes are missjuged by air or something in the background. Delete those records
+1. clean data: sometimes the eyes are missjuged by air, nose or something in the background. **Delete those records**
 
-1. Normalize image sizes: All images have pixel dimention difference. We need to cut them to be the all the same pixels.
+1. Normalize image sizes: All images have pixel dimention difference. We need to cut them to be the all the same pixels. (_fixed during data collection_)
 
 2. Normalize Coordinates: Scale x and y to a range between 0 and 1 by dividing by the screen width and height (_in my lenovo: 1920x1080_), respectively.
 
