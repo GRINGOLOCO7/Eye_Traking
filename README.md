@@ -2,6 +2,8 @@
 
 In this repo we will create a CNN to detect where the user eye are looking in the screen using the computer webcam
 
+**Computer Desktop dimention 1920x1080**
+
 ## Collect Data
 
 To collect data I prepared a code (`data_collection.py`).
