@@ -32,6 +32,8 @@ To collect data I prepared a code (`data_collection.py`).
 
 #### Data Processing
 
+1. check perentage of the screen that was coverd by the _x_ and _y_ poits we looked at.
+
 1. clean data: sometimes the eyes are missjuged by air, nose or something in the background. **Delete those records**
 
 1. Normalize image sizes: All images have pixel dimention difference. We need to cut them to be the all the same pixels. (_fixed during data collection_)
