@@ -67,7 +67,7 @@ def main():
             draw_point(screenshot, x, y)
             cv2.imshow("Interactive Screen", screenshot)
 
-            time.sleep(2.5)  # 2.5 sec to adjust eye to look at the point
+            time.sleep(1)  # 2.5 sec to adjust eye to look at the point
 
             ret, frame = cap.read()
             if not ret:
