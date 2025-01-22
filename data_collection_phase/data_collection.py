@@ -59,7 +59,7 @@ def main():
         screen_width, screen_height = screenshot.shape[1], screenshot.shape[0]
         print(f"Screen dimensions: {screen_width}x{screen_height}") # 1920x1080
 
-        while frame_count < 1000:  # Limit to 1000 frames
+        while frame_count < 2000:  # Limit to 1000 frames
             x = np.random.randint(0, screen_width)
             y = np.random.randint(0, screen_height)
 
