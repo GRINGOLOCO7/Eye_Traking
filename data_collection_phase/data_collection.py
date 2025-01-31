@@ -12,7 +12,7 @@ def take_screenshot():
     return screenshot
 
 # Draw a point randomly on the screen
-def draw_point(image, x, y, color=(0, 0, 255), radius=30):
+def draw_point(image, x, y, color=(0, 0, 255), radius=45):
     cv2.circle(image, (x, y), radius, color, -1)
 
 # Normalize and save the detected region
@@ -59,7 +59,7 @@ def main():
         screen_width, screen_height = screenshot.shape[1], screenshot.shape[0]
         print(f"Screen dimensions: {screen_width}x{screen_height}") # 1920x1080
 
-        while frame_count < 2000:  # Limit to 1000 frames
+        while frame_count < 5000:  # Limit to 1000 frames
             x = np.random.randint(0, screen_width)
             y = np.random.randint(0, screen_height)
 
