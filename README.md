@@ -4,6 +4,13 @@ In this repo we will create a CNN to detect where the user eye are looking in th
 
 **Computer Desktop dimention 1920x1080**
 
+## Repo Structure
+
+- [data_collection_phase](): Script to collect data
+- [clean_data](): Procedure to extract only good tripes of face, left eye and right eye
+- [only_face_model](): CNN trained to detect where you are looking on the screen based on face corped image
+- [triple_eyeface_model](): CNN trained to detect where you are looking on the screen based on triple (face, right eye and left eye corped images)
+
 ## Collect Data
 
 To collect data I prepared a code (`data_collection.py`).
