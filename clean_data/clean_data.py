@@ -14,7 +14,7 @@ image_indices = sorted(
 )
 
 # Ensure we are starting from the right index (1010 or the desired starting index)
-start_index = 1010
+start_index = 1212
 if start_index >= len(image_indices):
     print(f"Starting index {start_index} is out of range.")
     exit()
