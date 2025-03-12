@@ -57,138 +57,114 @@ class GazeDataset(Dataset):
 
 class CustomGazeLoss(nn.Module):
     """
-    Custom loss function for gaze prediction that combines:
-    1. MSE for absolute position accuracy
-    2. Cosine similarity for directional accuracy
-    3. Relative distance preservation
+    Enhanced loss function for gaze prediction that combines:
+    1. Separate MSE for x and y coordinates
+    2. L1 loss for absolute differences
+    3. Relative position loss to maintain spatial relationships
     """
     def __init__(self):
         super(CustomGazeLoss, self).__init__()
         self.mse = nn.MSELoss()
+        self.l1 = nn.L1Loss()
 
     def forward(self, pred, target):
-        # Standard MSE loss
-        mse_loss = self.mse(pred, target)
+        # Separate coordinate losses
+        mse_x = self.mse(pred[:, 0], target[:, 0])  # MSE for x coordinates
+        mse_y = self.mse(pred[:, 1], target[:, 1])  # MSE for y coordinates
 
-        # Directional loss using cosine similarity
-        pred_normalized = pred / (torch.norm(pred, dim=1, keepdim=True) + 1e-7)
-        target_normalized = target / (torch.norm(target, dim=1, keepdim=True) + 1e-7)
-        cos_loss = 1 - torch.mean(torch.sum(pred_normalized * target_normalized, dim=1))
+        # L1 loss for absolute differences
+        l1_loss = self.l1(pred, target)
+
+        # Relative position loss
+        pred_diff = pred[:, 1:] - pred[:, :-1]
+        target_diff = target[:, 1:] - target[:, :-1]
+        relative_loss = self.mse(pred_diff, target_diff)
 
         # Combine losses with weights
-        total_loss = mse_loss + 0.5 * cos_loss
+        total_loss = (mse_x + mse_y) * 0.4 + l1_loss * 0.4 + relative_loss * 0.2
 
         return total_loss
 
 class GazeNet(nn.Module):
-    """
-    Neural network for gaze prediction.
-    Inspired by the architecture in https://github.com/pperle/gaze-tracking
-    but modified to work with full face images instead of separate eye patches.
-
-    The network consists of:
-    1. Convolutional layers for feature extraction
-    2. Batch normalization for training stability
-    3. Dropout for regularization
-    4. Fully connected layers for coordinate regression
-    """
     def __init__(self):
         super(GazeNet, self).__init__()
 
-        # Increase model capacity
-        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3)  # Larger kernel for better feature capture
-        self.conv2 = nn.Conv2d(64, 128, kernel_size=5, stride=2, padding=2)
-        self.conv3 = nn.Conv2d(128, 256, kernel_size=3, stride=2, padding=1)
-        self.conv4 = nn.Conv2d(256, 512, kernel_size=3, stride=2, padding=1)
+        # Convolutional layers with batch normalization
+        self.conv_layers = nn.Sequential(
+            nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3),  # Match kernel size 7x7
+            nn.BatchNorm2d(64),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Conv2d(64, 128, kernel_size=5, padding=2),  # Match kernel size 5x5
+            nn.BatchNorm2d(128),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(128, 256, kernel_size=3, padding=1),
+            nn.BatchNorm2d(256),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(256, 512, kernel_size=3, padding=1),
+            nn.BatchNorm2d(512),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(512, 512, kernel_size=3, padding=1),
+            nn.BatchNorm2d(512),
+            nn.ReLU(inplace=True),
+            nn.AdaptiveAvgPool2d((1, 1))
+        )
 
-        self.bn1 = nn.BatchNorm2d(64)
-        self.bn2 = nn.BatchNorm2d(128)
-        self.bn3 = nn.BatchNorm2d(256)
-        self.bn4 = nn.BatchNorm2d(512)
+        # Attention mechanism (1x1 convolution style)
+        self.attention = nn.Sequential(
+            nn.Conv2d(512, 1, kernel_size=1),  # Changed to Conv2d to match saved model
+            nn.Sigmoid()
+        )
 
-        # Add residual connections
-        self.skip_conv1 = nn.Conv2d(64, 128, kernel_size=1, stride=2)
-        self.skip_conv2 = nn.Conv2d(128, 256, kernel_size=1, stride=2)
-        self.skip_conv3 = nn.Conv2d(256, 512, kernel_size=1, stride=2)
-
-        self.dropout = nn.Dropout(0.5)  # Increased dropout
-
-        # Larger fully connected layers
-        self.fc1 = nn.Linear(512 * 12 * 12, 2048)
-        self.fc2 = nn.Linear(2048, 512)
-        self.fc3 = nn.Linear(512, 2)
-
-        self.relu = nn.ReLU()
-        self.tanh = nn.Tanh()  # Add tanh for better coordinate prediction
+        # Regression layers - matching exact saved model structure
+        self.regressor = nn.Sequential(
+            nn.ReLU(),  # index 0
+            nn.Dropout(0.5),  # index 1
+            nn.Linear(512, 256),  # index 2
+            nn.ReLU(),  # index 3
+            nn.Dropout(0.5),  # index 4
+            nn.Linear(256, 64),  # index 5
+            nn.ReLU(),  # index 6
+            nn.Dropout(0.3),  # index 7
+            nn.Linear(64, 2),  # index 8
+            nn.Sigmoid()  # index 9
+        )
 
     def forward(self, x):
-        """
-        Forward pass of the network.
-        Args:
-            x: Input tensor of shape (batch_size, 3, 190, 190)
-        Returns:
-            Predicted gaze coordinates normalized to [0,1] range
-        """
-        # First conv block
-        x1 = self.relu(self.bn1(self.conv1(x)))
+        # Feature extraction
+        features = self.conv_layers(x)
 
-        # Second conv block with skip connection
-        x2_main = self.conv2(x1)
-        x2_skip = self.skip_conv1(x1)
-        x2 = self.relu(self.bn2(x2_main + x2_skip))
+        # Apply attention (keeping spatial dimensions)
+        attention_weights = self.attention(features)
+        attended_features = features * attention_weights
 
-        # Third conv block with skip connection
-        x3_main = self.conv3(x2)
-        x3_skip = self.skip_conv2(x2)
-        x3 = self.relu(self.bn3(x3_main + x3_skip))
+        # Global average pooling and flatten
+        features = attended_features.view(attended_features.size(0), -1)
 
-        # Fourth conv block with skip connection
-        x4_main = self.conv4(x3)
-        x4_skip = self.skip_conv3(x3)
-        x4 = self.relu(self.bn4(x4_main + x4_skip))
+        # Regression
+        coordinates = self.regressor(features)
 
-        # Flatten and fully connected layers
-        x = x4.view(x4.size(0), -1)
-        x = self.relu(self.fc1(x))
-        x = self.dropout(x)
-        x = self.relu(self.fc2(x))
-        x = self.dropout(x)
-        x = self.tanh(self.fc3(x))  # Use tanh to bound outputs to [-1, 1]
+        return coordinates
 
-        # Scale from [-1, 1] to [0, 1]
-        x = (x + 1) / 2
-
-        return x
-
-def train_model(model, train_loader, val_loader, num_epochs=50):
+def train_model(model, train_loader, val_loader, num_epochs=100):
     """
     Training function with validation and model checkpointing.
-    Similar to the training approach in the reference project but with added
-    learning rate scheduling and validation monitoring.
-
-    Args:
-        model: The GazeNet model
-        train_loader: DataLoader for training data
-        val_loader: DataLoader for validation data
-        num_epochs: Number of training epochs
     """
-    # Use GPU if available
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = model.to(device)
 
-    # Use custom loss function
     criterion = CustomGazeLoss()
 
-    # Use AdamW optimizer with weight decay
-    optimizer = optim.AdamW(model.parameters(), lr=0.001, weight_decay=0.01)
+    # Use AdamW with a smaller learning rate and weight decay
+    optimizer = optim.AdamW(model.parameters(), lr=0.0001, weight_decay=0.001)
 
-    # Cosine annealing scheduler for better optimization
-    scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(
-        optimizer, T_0=10, T_mult=2, eta_min=1e-6
+    # Use ReduceLROnPlateau instead of cosine annealing
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, mode='min', factor=0.5, patience=5, verbose=True
     )
 
     best_val_loss = float('inf')
-    patience = 10
+    patience = 15  # Increased patience
     patience_counter = 0
 
     for epoch in range(num_epochs):
@@ -205,7 +181,7 @@ def train_model(model, train_loader, val_loader, num_epochs=50):
             loss = criterion(outputs, labels)
             loss.backward()
 
-            # Gradient clipping to prevent exploding gradients
+            # Gradient clipping
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
 
             optimizer.step()
@@ -228,15 +204,15 @@ def train_model(model, train_loader, val_loader, num_epochs=50):
 
         val_loss = val_loss / len(val_loader)
 
-        # Learning rate scheduling
-        scheduler.step()
+        # Learning rate scheduling based on validation loss
+        scheduler.step(val_loss)
 
         print(f'Epoch {epoch+1}/{num_epochs}')
         print(f'Training Loss: {epoch_loss:.4f}')
         print(f'Validation Loss: {val_loss:.4f}')
-        print(f'Learning Rate: {scheduler.get_last_lr()[0]:.6f}')
+        print(f'Learning Rate: {optimizer.param_groups[0]["lr"]:.6f}')
 
-        # Early stopping with patience
+        # Save best model and early stopping
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             torch.save(model.state_dict(), 'only_face_model2/best_reg_model.pth')

@@ -7,7 +7,7 @@ from PIL import Image
 import os
 from CNN_train_class import GazeNetClassification, GRID_COLS, GRID_ROWS
 
-def load_model(model_path='best_class_model.pth'):
+def load_model(model_path='only_face_model2/best_class_model.pth'):
     """Load the trained classification model."""
     model = GazeNetClassification()
     model.load_state_dict(torch.load(model_path))

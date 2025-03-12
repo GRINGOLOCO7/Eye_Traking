@@ -5,9 +5,10 @@ import pandas as pd
 import numpy as np
 from PIL import Image
 import os
+import torch.nn as nn
 from CNN_train_reg import GazeNet
 
-def load_model(model_path='best_reg_model.pth'):
+def load_model(model_path='only_face_model2/best_reg_model.pth'):
     """Load the trained regression model."""
     model = GazeNet()
     model.load_state_dict(torch.load(model_path))
@@ -25,9 +26,9 @@ def visualize_predictions(model, test_csv, num_samples=50):
     """
     # Data loading setup
     transform = transforms.Compose([
-        transforms.Resize((190, 190)),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+        transforms.Resize((190, 190)),  # Resize to match our model's input size
+        transforms.ToTensor(),  # Convert to tensor and scale to [0,1]
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],  # ImageNet normalization
                            std=[0.229, 0.224, 0.225])
     ])
 
