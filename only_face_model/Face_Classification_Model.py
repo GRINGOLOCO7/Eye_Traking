@@ -141,8 +141,6 @@ def validate(model, val_loader, criterion, device, screen_grid):
     val_loss = 0
     correct = 0
     total = 0
-    all_preds = []
-    all_targets = []
     pred_coords = []
     true_coords = []
 
@@ -156,18 +154,11 @@ def validate(model, val_loader, criterion, device, screen_grid):
 
             # Get predictions
             _, predicted = torch.max(outputs.data, 1)
-            _, true_class = torch.max(targets.data, 1)
-
-            # Calculate accuracy
-            total += true_class.size(0)
-            correct += (predicted == true_class).sum().item()
-
-            # Store predictions and targets for analysis
-            all_preds.extend(predicted.cpu().numpy())
-            all_targets.extend(true_class.cpu().numpy())
+            total += targets.size(0)
+            correct += (predicted == targets).sum().item()
 
             # Convert predictions to screen coordinates
-            for pred_idx, true_idx in zip(predicted.cpu().numpy(), true_class.cpu().numpy()):
+            for pred_idx, true_idx in zip(predicted.cpu().numpy(), targets.cpu().numpy()):
                 pred_x, pred_y = screen_grid.get_cell_center(pred_idx)
                 pred_coords.append([pred_x, pred_y])
                 true_x, true_y = screen_grid.get_cell_center(true_idx)
