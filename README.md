@@ -14,6 +14,12 @@ CNN model
 
 We discretized the problem form a regression model that predict (x, y) coordinate of eye gaze on the screen, to a CNN classifier that predicts eye gaze on a 10x10 grid of the coputer screen.
 
+Objective:
+
+Use eyes images (taken from webcam) to predict where on the screen the user is looking at
+<img src="https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/collect_data/data/saved_images/cell_100_img_0.png" alt="drawing" width="150"/>
+The screen is discretized into a 10x10 grid makeing the problem a classification (an not a regression)
+
 **Computer Desktop dimention 1920x1080**
 
 This way the model learns faster and we where able to collect much more (quality) data.
@@ -83,6 +89,57 @@ Where each cell tels me how much, in live testing, the `predicted value by the m
     - These never seen data, images of eyes collected with smae technique of the data collection phase but in different time of day and locations, makes the model brake easily.
     <img src="https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/assets/collection_data_phase.jpg" alt="drawing" width="300"/>
 
+#### collect_data
+
+The pytthin file, load the shape_detector_68 model to detect user face and eyes. We are able, using this model, to corp out a 30x155 image of the 2 eyes of the user.
+
+We do this in parallel with popping a window, as big as the screen.
+
+The data collection phase has started... arround 10 minutes to collect 10k cleaned images of the eyes of the user.
+
+On the window that pop up, we sequentialy show to the user a square of the 10x10 grid, The user have 3 seconds to concentrate the gaze and then we start recording 100 frames/images of the user looking at cell 1. We do this for all the 100 cells.
+
+10x10x100 = 10000 images of the user lookig at each cell. Along with collecting images, we prepare a dataset containg the path of the image and the cell we where looking at (this will be helpfull in the next step).
+
+=> output: /data -> folder containg 10k images labled and a structured database
+
+#### dataset
+
+Torch, request a specific data structure for the images. A folder for testing and training is required. Plus, in each, we need to have one folder for each class containg the images belonging to that class.
+
+In the python file, we automaticaly split in train and test the images and locate them in the correct folder (eg. /dataset/test/10/ -> an image of my eyes where I was looking at cell 10).
+
+Plus we apply Augmentations to soem images. This make the dataset larger and allow the model to be stronger adn generalize better:
+    - Rotated by ±15°
+
+    - Adjusted for brightness and contrast
+
+    - Saved in both original and augmented
+
+=> output /dataset -> folder containgg structured dataset coherent with torch requironments (test and train and subfolders for each class)
+
+#### model
+
+Here we define once the model structure and required functions.
+
+Note that we are using resNet as base, where the last layers are free to be finetuned, plus we define last dense layer (with dropout to avoid overfitting) and ending into a layer fo 100 (number of classes we are classifing)
+
+#### train
+
+In train folder we have a notebook that train teh CNN to recive a 30x155 image of the eyes, and output the cell form 1 to 100 that we where looking at. (_more infos in the noteboo itself_)
+
+=> output: it output and save the model (.pth) that we can later use for our tasks
+
+#### test
+
+Contains many scripts for live testing and off-line testing and error visualizations
+    - Discrete testing: Script tht collect faces looking at cell on the screen. And then we can predict one by one the eye gaze that the model output and compare with the real cell we where looking at
+
+    - Error calculation patterns: Will make user complete a round of data collection, where user look each cell twice in total and output the error pattern for future adjustments in live testing
+
+    - Then we have python files for live testing
+
+
 <br>
 
 
@@ -90,6 +147,14 @@ Where each cell tels me how much, in live testing, the `predicted value by the m
 
 
 ## Future Improovments
+THE MODEL IS PROMESSING.
+
+Trainig and testing are very high. This showcase how the challenging problem of eye gaze detection was succesfuly takled, by discretizing such problem form regression to a classification and simplify the model to just take as input the image of the eyes and nothing else.
+
+BUT, due to this semplicity the mdoel lack in generalization and can't handle small variation form samples form traing/test AND live testing.
+
+1. Collect data, train and test at the same time of the day, with same illumination to check accuracy then
+1. Make the data acquisition setup as a standard. Meaning that data aquisition pose and live test pose, should be EXACTLY the same, in therm of light condition but also coputer position, head high, chair position, fix position fo computer on the table, etc...
 1. Add pitch roll and yaw to triangulate face position and eye gaze precision
 2. Combine and concatenate more images for bigger overall model
 - Separate CNN Branches: One CNN for the face image + Two separate CNNs for the left eye and right eye images.
