@@ -51,6 +51,7 @@ current_cell_base = 55
 current_cell_avg = 55
 current_cell_max = 55
 current_cell_min = 55
+current_cell_weigh = 55
 GRID_WIDTH, GRID_HEIGHT = SCREEN_WIDTH // GRID_COLS, SCREEN_HEIGHT // GRID_ROWS
 grid_img = np.zeros((SCREEN_HEIGHT, SCREEN_WIDTH, 3), dtype=np.uint8) # Create a black canvas to overlay the grid
 ########################################################################
@@ -66,7 +67,108 @@ def draw_square(n, grid_img=grid_img,color=(0, 0, 255)):
     cv2.rectangle(img, (x, y), (x + GRID_WIDTH, y + GRID_HEIGHT), color, 2)
     return img
 error_map = {
-    1:  [12,10],2:  [-1,11],3:  [19,8],4:  [-3,7],5:  [8,19],6:  [61,18],7:  [49,6],8:  [5,16],9:  [4,15],10: [3,3],11: [13,13],12: [44,12],13: [-12,0],14: [-1,-3],15: [52,-2],16: [40,-3],17: [-4,-4],18: [6,6],19: [5,-6],20: [-7,77],21: [57,-8],22: [2,-9],23: [1,-10],24: [-11,0],25: [-12,-1],26: [-13,-25],27: [-14,-14],28: [39,69],29: [-16,-5],30: [-17,-17],31: [-20,-18],32: [-8,-8],33: [-9,-9],34: [-21,-23],35: [-11,-22],36: [-23,-23],37: [30,-24],38: [-37,-14],39: [-26,-38],40: [38,-27],41: [-17,-28],42: [-18,-18],43: [-30,-19],44: [-31,-43],45: [-32,-32],46: [-33,-33],47: [-23,-46],48: [-26,-35],49: [-38,-25],50: [-26,-49],51: [-27,-38],52: [-28,-51],53: [-42,-29],54: [-43,-41],55: [-42,-31],56: [-32,-43],57: [-46,-46],58: [-34,-47],59: [-35,-46],60: [-36,-36],61: [-48,-37],62: [-49,-49],63: [-50,-39],64: [14,-51],65: [-52,-52],66: [-42,-53],67: [-43,-43],68: [-55,-44],69: [-58,-56],70: [-59,-57],71: [-58,-47],72: [-48,-61],73: [-60,-49],74: [-61,23],75: [-8,-51],76: [-63,-65],77: [-66,-53],78: [-67,-43],79: [-44,-66],80: [-67,-67],81: [-68,-57],82: [-58,-58],83: [-48,-59],84: [-60,-60],85: [-50,-61],86: [-62,-62],87: [-63,-74],88: [-64,-64],89: [-65,-76],90: [-79,-89],91: [-78,-67],92: [-68,-79],93: [-71,4],94: [-70,-81],95: [-82,-82],96: [-83,-72],97: [-73,-73],98: [-74,-1],99: [-75,-86],100:[-87,-87]
+1: [11, 32],
+2: [73, 51],
+3: [69, 60],
+4: [70, 71],
+5: [66, 9],
+6: [54, 63],
+7: [16, 25],
+8: [4, 63],
+9: [52, -5],
+10: [67, 19],
+11: [50, 58],
+12: [58, -9],
+13: [1, 19],
+14: [46, 63],
+15: [-3, 46],
+16: [66, 57],
+17: [60, 59],
+18: [60, 43],
+19: [53, -19],
+20: [56, 56],
+21: [50, 64],
+22: [11, 39],
+23: [9, 40],
+24: [51, 37],
+25: [52, 7],
+26: [49, 52],
+27: [46, 49],
+28: [64, -13],
+29: [48, 32],
+30: [47, 19],
+31: [2, 48],
+32: [51, -32],
+33: [41, 0],
+34: [14, 7],
+35: [10, 35],
+36: [25, -1],
+37: [39, -5],
+38: [-38, 32],
+39: [42, 9],
+40: [35, 21],
+41: [23, -29],
+42: [26, 35],
+43: [46, -20],
+44: [29, -30],
+45: [37, -44],
+46: [-10, 33],
+47: [31, 30],
+48: [26, 13],
+49: [14, 1],
+50: [14, 21],
+51: [26, -51],
+52: [-49, 10],
+53: [10, -8],
+54: [-21, 23],
+55: [9, -8],
+56: [-3, -22],
+57: [20, 32],
+58: [15, 3],
+59: [5, 1],
+60: [12, 12],
+61: [16, -15],
+62: [-28, -62],
+63: [-31, 8],
+64: [13, -31],
+65: [11, -31],
+66: [10, 3],
+67: [-16, 10],
+68: [-4, -4],
+69: [-69, -6],
+70: [-8, -10],
+71: [1, -18],
+72: [-24, 5],
+73: [-25, -10],
+74: [-18, -3],
+75: [-6, -42],
+76: [-13, 0],
+77: [-65, 8],
+78: [-30, -1],
+79: [2, -18],
+80: [-19, 17],
+81: [-70, -49],
+82: [-70, -7],
+83: [-36, -13],
+84: [-10, -43],
+85: [-14, -38],
+86: [-10, -37],
+87: [-86, -54],
+88: [-17, -40],
+89: [-12, -74],
+90: [-29, -27],
+91: [-14, -62],
+92: [-79, -91],
+93: [-61, -38],
+94: [-15, -34],
+95: [-62, -18],
+96: [-26, -40],
+96: [-26, -40],
+96: [-26, -40],
+97: [-65, -20],
+98: [-38, -21],
+99: [-23, -43],
+100:[-34, -52]
 }
 def adjust_error_max(predicted_class, errors):
     new_prediction = predicted_class
@@ -136,7 +238,7 @@ while True:
         with torch.no_grad():
             output = model(input_image)
             _, predicted_class = torch.max(output, 1)
-            predicted_class = predicted_class.item() +1
+            predicted_class = predicted_class.item()
             print(f"\n\n-----\n\npredicted desire cell: {predicted_class}")
             ####################################################################
 
@@ -151,25 +253,36 @@ while True:
             current_cell_base = next_drawn_cell
             #-------------------------------------------------------------------
             desire_cell = adjust_error_avg(predicted_class, error_map[predicted_class])
-            next_drawn_cell = next_cell(current_cell_avg, desire_cell)
+            next_drawn_cell = next_cell(current_cell_avg, desire_cell+1)
             print(f"        2. from current cell: {current_cell_avg} to {desire_cell}. End up in:")
             print(f"           -> next closest in path: {next_drawn_cell}\n")
             img = draw_square(next_drawn_cell, img, (0, 255, 0))
             current_cell_avg = next_drawn_cell
             #-------------------------------------------------------------------
             desire_cell = adjust_error_max(predicted_class, error_map[predicted_class])
-            next_drawn_cell = next_cell(current_cell_max, desire_cell)
+            next_drawn_cell = next_cell(current_cell_max, desire_cell+1)
             print(f"        3. from current cell: {current_cell_max} to {desire_cell}. End up in:")
             print(f"           -> next closest in path: {next_drawn_cell}\n")
             img = draw_square(next_drawn_cell, img, (0, 255, 255))
             current_cell_max = next_drawn_cell
             #-------------------------------------------------------------------
             desire_cell = adjust_error_min(predicted_class, error_map[predicted_class])
-            next_drawn_cell = next_cell(current_cell_min, desire_cell)
+            next_drawn_cell = next_cell(current_cell_min, desire_cell+1)
             print(f"        4. from current cell: {current_cell_min} to {desire_cell}. End up in:")
             print(f"           -> next closest in path: {next_drawn_cell}\n")
             img = draw_square(next_drawn_cell, img, (255, 0, 0))
             current_cell_min = next_drawn_cell
+            #-------------------------------------------------------------------
+            # weighted prediction
+            full_probabilities = F.softmax(output, dim=1)[0]
+            top5_prob, top5_catid = torch.topk(full_probabilities, 5)
+            desire_cell = top5_catid[0]*top5_prob[0] + top5_catid[1]*top5_prob[1] + top5_catid[2]*top5_prob[2] + top5_catid[3]*top5_prob[3] + top5_catid[4]*top5_prob[4]
+            desire_cell = desire_cell.int()
+            next_drawn_cell = next_cell(current_cell_weigh, desire_cell+1)
+            print(f"        5. from current cell: {current_cell_weigh} to {desire_cell}. End up in:")
+            print(f"           -> next closest in path: {next_drawn_cell}\n")
+            img = draw_square(next_drawn_cell, img, (255, 255, 0))
+            current_cell_weigh = next_drawn_cell
             ####################################################################
 
 
