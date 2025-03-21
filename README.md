@@ -25,17 +25,20 @@ This way the model learns faster and we where able to collect much more (quality
 
 Training and testing results are amzing!! Above 90% accuracy in both!!
 
-While (training)[https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/train/train_model.ipynb] we can see that loss functions of both train and validation decrease, advising that the model is learning well without overfitting, plus high accuracy of validation (above 90%)
+While [training](https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/train/train_model.ipynb) we can see that loss functions of both train and validation decrease, advising that the model is learning well without overfitting, plus high accuracy of validation (above 90%)
 
-<img src="https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/assets/results_training_model.jpg" alt="drawing" width="150"/>
+<img src="https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/assets/results_training_model.jpg" alt="drawing" width="300"/>
 
 Checking at test set, we also conclude high accuracy and good results! Overall accuracy above 90% on these unseen immages
 
-<img src="https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/assets/results_testing_model.jpg" alt="drawing" width="150"/>
+<img src="https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/assets/results_testing_model.jpg" alt="drawing" width="300"/>
 
-When going to live testing, we use the same technique used when collecting data, and frame by frame feed the image of the 2 eyes to the model. As we can notice in (test_offline.ipynb)[https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/test/test_offline.ipynb] or by running (live_testing.py)[https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/test/live_testing.py], here the predictions are not even close to the amazing results we had in traain and test. The problem can be caused by different lightning (even if unporbable, given the fact that before training we augmented the immages, adding random brighness, contract adn rotations), OR due to different head positions. We can conclude that the mdoel perform poorly on live data, due to small head moovment never seen by the model.
+When going to live testing, we use the same technique used when collecting data, and frame by frame feed the image of the 2 eyes to the model. As we can notice in [test_offline.ipynb](https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/test/test_offline.ipynb) or by running [live_testing.py](https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/test/live_testing.py), here the predictions are not even close to the amazing results we had in traain and test. The problem can be caused by different lightning (even if unporbable, given the fact that before training we augmented the immages, adding random brighness, contract adn rotations), OR due to different head positions. We can conclude that the mdoel perform poorly on live data, due to small head moovment never seen by the model.
 
-[![Watch the video first live testing](https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/assets/results_testing_model.jpg)](https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/assets/live_test1.mp4)
+As I said, same we belive that same eyes pictures, can have different eye focus, depending on hwere the face is... Every time we tryied to replicate and make the image aquisition standard, but even with this attention, the results are not accurate as in testing
+
+<img src="https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/assets/same_eyes_config_different_gaze.jpg" alt="drawing" width="300"/>
+
 
 
 <br>
