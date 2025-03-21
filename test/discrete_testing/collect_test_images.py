@@ -21,7 +21,7 @@ CORP_EYE_WIDTH, CORP_EYE_HEIGHT = 155, 30
 # Create a black screen-sized image
 grid_img = np.zeros((SCREEN_HEIGHT, SCREEN_WIDTH, 3), dtype=np.uint8)
 detector = dlib.get_frontal_face_detector() # Load the pre-trained face detector from dlib
-predictor = dlib.shape_predictor('../collect_data/shape_predictor_68_face_landmarks.dat') # Load the facial landmarks predictor
+predictor = dlib.shape_predictor('../../collect_data/shape_predictor_68_face_landmarks.dat') # Load the facial landmarks predictor
 # Create output directory
 OUTPUT_DIR = "test_images"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
