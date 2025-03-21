@@ -44,7 +44,7 @@ def capture_images(cell_number):
                 print("Failed to capture frame")
                 continue
             # Save the image
-            filename = os.path.join(OUTPUT_DIR, f"cell_{cell_number}_img_{i+100}.png")
+            filename = os.path.join(OUTPUT_DIR, f"cell_{cell_number}_img_{i}.png")
 
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             faces = detector(gray)
