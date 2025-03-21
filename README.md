@@ -37,6 +37,8 @@ Checking at test set, we also conclude high accuracy and good results! Overall a
 When going to live testing, we use the same technique used when collecting data, and frame by frame feed the image of the 2 eyes to the model. As we can notice in [test_offline.ipynb](https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/test/test_offline.ipynb) or by running [live_testing.py](https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/test/live_testing.py), here the predictions are not even close to the amazing results we had in traain and test. The problem can be caused by different lightning (even if unporbable, given the fact that before training we augmented the immages, adding random brighness, contract adn rotations), OR due to different head positions. We can conclude that the mdoel perform poorly on live data, due to small head moovment never seen by the model.
 
 As I said, same we belive that same eyes pictures, can have different eye focus, depending on hwere the face is... Every time we tryied to replicate and make the image aquisition standard, but even with this attention, the results are not accurate as in testing
+I believe the problem is that it is very sensitive to changes in face position and light conditions (I tried to tape the computer on the table and fix my head and chair position for data collecting and testing. Plus I tried to do everything around the same time of the day, but still nothing to do…).
+
 
 <img src="https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/assets/same_eyes_config_different_gaze.jpg" alt="drawing" width="300"/>
 
