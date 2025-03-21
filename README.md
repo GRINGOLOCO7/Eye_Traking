@@ -47,7 +47,27 @@ As I said, same we belive that same eyes pictures, can have different eye focus,
 
 ## Repo Structure
 
-llllllllllllll
+1. `collect_data/`
+    - The script will take about 10 minutes and will record a total of 10k images in one run.
+    - Run the script in the same folder
+    - The script will pop up a balck screen as big as the computer screen
+    - Will divide the screen in a 10x10 grid
+    - One by one will show on the screen one square to look
+    - Give 3 seconds to adjust eye gaze
+    - Start recording and storing each frame
+    - In the end we end up with a new folder called `data/` that cotains a `face.csv` file and a `saved_images` folder. The csv file maps the images to the cell we where looking at
+2. `dataset/`
+    - Torch needs a specific structure for the dataset. It is required a folder for testing and a forlder for training. In each subfolders, as much as the classes we have to predict (in our case 10x10 grid = 100 classes = 100 folders)
+    - The script reorganize automticaly the images in to this structure.
+    - Plus apply randomly augmentation od the images. Increaseing the dataset dimention and the model strenght, plus avoiding overfitting.
+3. `model/`
+    - In the python file we difine the CNN structure (as we can notice we use a resNet as base and start trining from there). We unfreze the last 2 layers for better learning.
+    - We add dropout of 0.5 to avoid overfitting and last layer of 100 to predict our 100 classes
+4. `train/`
+    - The train script loads the dataset and the model and start training
+5. `test/`
+    - the test scripts are there to play with new, and diverse data inputs
+    - These never seen data, images of eyes collected with smae technique of the data collection phase but in different time of day and locations, makes the model brake easily.
 
 <br>
 
@@ -56,6 +76,8 @@ llllllllllllll
 
 
 ## Future Improovments
+1. Add pitch roll and yaw to triangulate face position and eye gaze precision
+2. Combine and concatenate more images for bigger overall model
 - Separate CNN Branches: One CNN for the face image + Two separate CNNs for the left eye and right eye images.
 - Feature Fusion: Concatenate the embeddings from all CNN branches.
 - Fully Connected Layers: Pass the concatenated embeddings through fully connected layers to predict the normalized (x, y) coordinates.
