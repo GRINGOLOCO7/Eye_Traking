@@ -65,9 +65,11 @@ As I said, same we belive that same eyes pictures, can have different eye focus,
     - We add dropout of 0.5 to avoid overfitting and last layer of 100 to predict our 100 classes
 4. `train/`
     - The train script loads the dataset and the model and start training
+    <img src="https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/assets/infinite_trainings.jpg" alt="drawing" width="300"/>
 5. `test/`
     - the test scripts are there to play with new, and diverse data inputs
     - These never seen data, images of eyes collected with smae technique of the data collection phase but in different time of day and locations, makes the model brake easily.
+    <img src="https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/assets/collection_data_phase.jpg" alt="drawing" width="300"/>
 
 <br>
 
