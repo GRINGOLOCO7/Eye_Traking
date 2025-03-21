@@ -8,6 +8,7 @@ The objective is to create the most:
 - ready to use
 - for everyone to explore
 - NOT computational expensive
+- ONLY NEED BUILD IN WEBCAM
 
 CNN model
 
