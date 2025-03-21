@@ -1,3 +1,9 @@
+'''
+Script to collect images of the eyes region for the CNN model
+to thest model on new discrete images
+'''
+
+
 import cv2
 import numpy as np
 import pyautogui

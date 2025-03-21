@@ -12,6 +12,7 @@ print(f"cell size = {SCREEN_WIDTH/GRID_COLS}x{SCREEN_HEIGHT/GRID_ROWS}")
 
 # load database
 df = pd.read_csv('../collect_data/data/face.csv')
+print(len(df))
 '''
 face_image_path	cell
 0	cell_1_img_0.png	1

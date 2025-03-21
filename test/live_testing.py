@@ -1,3 +1,7 @@
+'''
+Script to test live the eye traker with the CNN model
+'''
+
 ########################################################################IMPORTS:
 import cv2
 import dlib
