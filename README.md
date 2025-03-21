@@ -29,9 +29,9 @@ While [training](https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/train/tr
 
 <img src="https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/assets/results_training_model.jpg" alt="drawing" width="300"/>
 
-Checking at test set, we also conclude high accuracy and good results! Overall accuracy above 90% on these unseen immages
+Checking at test set, we also conclude high accuracy and good results! Overall accuracy above 90% on these unseen immages. TEST RESULTS:
 
-<img src="https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/assets/results_testing_model.jpg" alt="drawing" width="300"/>
+<img src="https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/assets/results_testing_model.jpg" alt="drawing" width="500"/>
 
 When going to live testing, we use the same technique used when collecting data, and frame by frame feed the image of the 2 eyes to the model. As we can notice in [test_offline.ipynb](https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/test/test_offline.ipynb) or by running [live_testing.py](https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/test/live_testing.py), here the predictions are not even close to the amazing results we had in traain and test. The problem can be caused by different lightning (even if unporbable, given the fact that before training we augmented the immages, adding random brighness, contract adn rotations), OR due to different head positions. We can conclude that the mdoel perform poorly on live data, due to small head moovment never seen by the model.
 
