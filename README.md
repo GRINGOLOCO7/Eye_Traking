@@ -39,6 +39,13 @@ As I said, same we belive that same eyes pictures, can have different eye focus,
 
 <img src="https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/assets/same_eyes_config_different_gaze.jpg" alt="drawing" width="300"/>
 
+Looking at each point in the 10x10 grid twice, with random order, we get this error pattern:
+
+<img src="https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/test/errors_calculation_patterns/eye_tracking_errors.jpg" alt="drawing" width="300"/>
+
+Where each cell tels me how much, in live testing, the `predicted value by the model - real value` is. We can try to find patterns and smooth the eye traking in real time.
+
+
 
 
 <br>

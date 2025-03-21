@@ -15,7 +15,7 @@ import random
 # Import your model
 import sys
 import os
-script_dir = os.path.abspath("..")
+script_dir = os.path.abspath("../..")
 sys.path.append(script_dir)
 from model.model import *
 
@@ -53,13 +53,13 @@ predictor = dlib.shape_predictor('../../collect_data/shape_predictor_68_face_lan
 errors_collection = {i: [] for i in range(1, 101)}  # Pre-initialize all cells
 
 
-def draw_square(n):
+def draw_square(n,grid_img=grid_img,color=(0, 0, 255)):
     """Draw a square on the grid at position n"""
     row = (n - 1) // GRID_COLS
     col = (n - 1) % GRID_COLS
     x, y = col * GRID_WIDTH, row * GRID_HEIGHT
     img = grid_img.copy()
-    cv2.rectangle(img, (x, y), (x + GRID_WIDTH, y + GRID_HEIGHT), (0, 0, 255), 2)
+    cv2.rectangle(img, (x, y), (x + GRID_WIDTH, y + GRID_HEIGHT), color, 2)
     return img
 
 
@@ -176,6 +176,8 @@ def collect_single_cell_error(cell_number, round_num):
 
     # Get prediction
     predicted = get_prediction(eye_region)
+    grid = draw_square(predicted, grid, (0, 255, 0))
+    cv2.imshow("Grid", grid)
 
     # Calculate error
     error = predicted - cell_number
@@ -186,7 +188,7 @@ def collect_single_cell_error(cell_number, round_num):
     print(f"Cell: {cell_number}, Predicted: {predicted}, Error: {error}")
 
     # Short pause before next cell
-    time.sleep(1)
+    time.sleep(2)
 
 
 def visualize_errors():
@@ -221,7 +223,7 @@ def visualize_errors():
     plt.ylabel("Row")
 
     # Save the visualization
-    plt.savefig("eye_tracking_errors.png")
+    plt.savefig("eye_tracking_errors2.png")
     plt.show()
 
     # Also save the raw data
