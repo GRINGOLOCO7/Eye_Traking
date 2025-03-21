@@ -1,52 +1,61 @@
 # Eye Traking System
 
-In this repo we will create a CNN to detect where the user eye are looking in the screen using the computer webcam
+In this repo we will create a CNN to detect where the user eyes are looking in the screen using only computer webcam.
+
+The objective is to create the most:
+- simple
+- effective
+- ready to use
+- for everyone to explore
+- NOT computational expensive
+
+CNN model
+
+We discretized the problem form a regression model that predict (x, y) coordinate of eye gaze on the screen, to a CNN classifier that predicts eye gaze on a 10x10 grid of the coputer screen.
 
 **Computer Desktop dimention 1920x1080**
 
+This way the model learns faster and we where able to collect much more (quality) data.
+
+<br>
+
+---
+
+## Results
+
+Training and testing results are amzing!! Above 90% accuracy in both!!
+
+While (training)[https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/train/train_model.ipynb] we can see that loss functions of both train and validation decrease, advising that the model is learning well without overfitting, plus high accuracy of validation (above 90%)
+
+<img src="https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/assets/results_training_model.jpg" alt="drawing" width="150"/>
+
+Checking at test set, we also conclude high accuracy and good results! Overall accuracy above 90% on these unseen immages
+
+<img src="https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/assets/results_testing_model.jpg" alt="drawing" width="150"/>
+
+When going to live testing, we use the same technique used when collecting data, and frame by frame feed the image of the 2 eyes to the model. As we can notice in (test_offline.ipynb)[https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/test/test_offline.ipynb] or by running (live_testing.py)[https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/test/live_testing.py], here the predictions are not even close to the amazing results we had in traain and test. The problem can be caused by different lightning (even if unporbable, given the fact that before training we augmented the immages, adding random brighness, contract adn rotations), OR due to different head positions. We can conclude that the mdoel perform poorly on live data, due to small head moovment never seen by the model.
+
+[![Watch the video first live testing](https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/assets/results_testing_model.jpg)](https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/assets/live_test1.mp4)
+
+
+<br>
+
+---
+
 ## Repo Structure
 
-- [data_collection_phase](https://github.com/GRINGOLOCO7/Eye_Traking/tree/main/data_collection_phase): Script to collect data
-- [clean_data](https://github.com/GRINGOLOCO7/Eye_Traking/tree/main/clean_data): Procedure to extract only good tripes of face, left eye and right eye
-- [only_face_model](https://github.com/GRINGOLOCO7/Eye_Traking/tree/main/only_face_model): CNN trained to detect where you are looking on the screen based on face corped image
-- [triple_eyeface_model](https://github.com/GRINGOLOCO7/Eye_Traking/tree/main/triple_eyeface_model): CNN trained to detect where you are looking on the screen based on triple (face, right eye and left eye corped images)
+llllllllllllll
 
-## Collect Data (data_collection_phase)
-
-To collect data we prepared a code (`data_collection.py`).
-
-1. The code open a window on the screen as big as Desktop screen. Then gives you 5 seconds to prepare.
-
-2. Random dots are spawned on the screen
-
-3. The user have cupple of second to look at the dot
-
-4. The code take a screenshot of the face, right eye and left eye and saves them in the `data/saved_images` folder. The face and eyes are detected thanks to pretrained models I downloaded (`haarcascade_frontalface_default.xml` and `haarcascade_eye.xml`). (find more infos [here](https://www.geeksforgeeks.org/opencv-python-program-face-detection/))
-
-5. **Face, Left Eye, Right Eye, X coordinate of the dot and Y coordinate of the dot are saved in a CSV file (`data/eye_data.csv`)**
+<br>
 
 
-## Data Processing (clean_data)
-1. Normalize image sizes: All images have pixel dimention difference. We need to cut them to be the all the same pixels. (_fixed during data collection_)
-1. clean data: sometimes the eyes are missjuged by air, nose or something in the background. **Delete those records**. In `clean_data/clean_data.py` we show each triple (face right and lef eyes) and with keyboards keys we can approve or disapprove the triple. Then, all the triple with good and clean data are saved in `clean_data/cleaned_eye_data.csv` with of course the respective x and y coordinate we where looking at. For 'debuggin' there is another python script to scroll trough the approved images (`scroll_approved_images.py`).
-1. data_exploration: such as checking perentage of the screen that was coverd by the _x_ and _y_ poits we looked at.
-2. data_exploration: Normalize Coordinates: Scale x and y to a range between 0 and 1 by dividing by the screen width and height (_in my lenovo: 1920x1080_), respectively.
 
-## CNN Structure and Study
 
-#### Input-Output Relationship
 
-**Input:** A combination of three images: the face image, the left eye image, and the right eye image.
-
-**Output:** A pair of continuous values (x, y) representing the gaze coordinates on the screen.
-
-#### Input Representation
-Concatenate Images: Process each image type (face, left eye, right eye) separately through different CNN branches and then concatenate their feature embeddings.
-
-#### Model Architecture:
-1. Separate CNN Branches: One CNN for the face image + Two separate CNNs for the left eye and right eye images.
-2. Feature Fusion: Concatenate the embeddings from all CNN branches.
-3. Fully Connected Layers: Pass the concatenated embeddings through fully connected layers to predict the normalized (x, y) coordinates.
+## Future Improovments
+- Separate CNN Branches: One CNN for the face image + Two separate CNNs for the left eye and right eye images.
+- Feature Fusion: Concatenate the embeddings from all CNN branches.
+- Fully Connected Layers: Pass the concatenated embeddings through fully connected layers to predict the normalized (x, y) coordinates.
 <details>
   <summary>Sample code</summary>
 
