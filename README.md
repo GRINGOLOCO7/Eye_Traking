@@ -40,6 +40,8 @@ As I said, same we belive that same eyes pictures, can have different eye focus,
 
 <img src="https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/assets/same_eyes_config_different_gaze.jpg" alt="drawing" width="300"/>
 
+Also time of the day differences make the predictions goes grazy (that is wy I ran the data collection phase twice in diffrent ligthing rooms... to make model strongger, but still, the live testing is much MUCH less accurate than test set)
+
 Looking at each point in the 10x10 grid twice, with random order, we get this error pattern:
 
 <img src="https://github.com/GRINGOLOCO7/Eye_Traking/blob/master/test/errors_calculation_patterns/eye_tracking_errors.jpg" alt="drawing" width="300"/>
