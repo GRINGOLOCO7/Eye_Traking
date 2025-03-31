@@ -1,4 +1,5 @@
 *.pth
 __pycache__
+venv
 old
 dataset

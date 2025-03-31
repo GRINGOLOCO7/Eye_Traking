@@ -30,6 +30,44 @@ This way, the model learns faster and we were able to collect much more (quality
 
 ---
 
+## Execution
+
+To execute the Eye Tracking System project, please follow the steps below:
+
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/GRINGOLOCO7/Eye_Traking.git
+   cd Eye_Traking
+   ```
+
+2. **Install Dependencies:**
+   Ensure that you have Python and the required libraries installed. You can install the necessary dependencies using pip:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Collect Data:**
+   Before training the model, you need to collect data using the `collect_data` script. This script will record images of your eyes looking at different parts of the screen.
+   ```bash
+   python collect_data/data_collection.py
+   ```
+
+4. **Prepare Dataset:**
+   The collected data needs to be organized into a structure suitable for training. Run the dataset preparation script:
+   ```bash
+   python dataset/organize_dataset.py
+   ```
+
+5. **Train the Model:**
+   Train the Convolutional Neural Network (CNN) using the prepared dataset. Execute `   jupyter train/train_model.ipynb`
+
+6. **Live Testing:**
+   For live testing, use the same technique used during data collection. The script will capture frames from the webcam and predict the eye gaze on the screen in real-time.
+   ```bash
+   python test/test_live.py
+   ```
+
+
 ## Results
 
 Training and testing results are amazing!! Above 90% accuracy in both!!
